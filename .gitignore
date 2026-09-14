@@ -1,0 +1,15 @@
+# The live database — created at runtime, holds the admin password hash,
+# TOTP secret, and all site content. Never belongs in git: it changes
+# constantly and, more importantly, is a real secret, not source code.
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm
+
+# Timestamped snapshots from server/backup.js — same sensitive content as
+# the live db, just historical copies of it.
+data/backups/
+
+# Common OS/editor noise.
+.DS_Store
+Thumbs.db
