@@ -64,6 +64,15 @@
   border:1px solid var(--rule);padding:0.8rem 1rem;border-radius:2px;
   word-break:break-all;margin:0.8rem 0;
 }
+.totp-qr{
+  display:inline-block;background:#fff;border:1px solid var(--rule);
+  border-radius:2px;padding:1rem;margin:0.8rem 0;line-height:0;
+}
+.totp-qr img{display:block;image-rendering:pixelated;}
+.manual-entry{margin-top:1.2rem;}
+.manual-entry summary{cursor:pointer;color:var(--text-muted);font-size:0.9rem;}
+.manual-entry summary:hover{color:var(--brass);}
+.manual-entry[open] summary{margin-bottom:0.4rem;}
 .recovery-codes{
   list-style:none;padding:0;margin:1.2rem 0;
   display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;

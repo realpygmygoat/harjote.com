@@ -24,6 +24,7 @@ const ASSETS = {
   "/assets/styles.css": { file: path.join(__dirname, "..", "styles.css"), type: "text/css; charset=utf-8" },
   "/assets/admin.css": { file: path.join(__dirname, "admin.css"), type: "text/css; charset=utf-8" },
   "/assets/admin.js": { file: path.join(__dirname, "public-admin.js"), type: "application/javascript; charset=utf-8" },
+  "/assets/qrcode-generator.js": { file: path.join(__dirname, "vendor", "qrcode-generator.js"), type: "application/javascript; charset=utf-8" },
   "/assets/lenis.min.js": { file: path.join(__dirname, "vendor", "lenis.min.js"), type: "application/javascript; charset=utf-8" },
   "/assets/site.js": { file: path.join(__dirname, "public-site.js"), type: "application/javascript; charset=utf-8" },
   "/assets/three.module.min.js": { file: path.join(__dirname, "vendor", "three.module.min.js"), type: "application/javascript; charset=utf-8" },

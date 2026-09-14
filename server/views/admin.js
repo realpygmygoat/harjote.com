@@ -33,6 +33,7 @@ function adminShell({ title, active, bodyHtml }) {
   </nav>
   ${bodyHtml}
 </div>
+<script src="/assets/qrcode-generator.js" defer></script>
 <script src="/assets/admin.js" defer></script>
 </body>
 </html>`;
@@ -310,10 +311,16 @@ function twoFactorSetupPage({ secret, otpauthUri, error }) {
   const body = `<h1>Set up two-factor authentication</h1>
     ${error ? `<div class="flash">${esc(error)}</div>` : ""}
     <div class="admin-section">
-      <p>1. Add this to your authenticator app. Most apps can scan a QR code — this one only supports manual entry, so open your app's "enter a setup key" option and type this in:</p>
-      <p class="mono secret-key">${esc(secret)}</p>
-      <p class="hint">Account name: Harjote's Site — leave time-based (TOTP), 6 digits, 30 seconds if asked.</p>
-      <p class="hint">If your app accepts a setup URI directly, you can paste this instead: <span class="mono">${esc(otpauthUri)}</span></p>
+      <p>1. Scan this with your authenticator app:</p>
+      <div id="totp-qr" class="totp-qr" data-otpauth="${attr(otpauthUri)}" aria-label="QR code for two-factor setup — use manual entry below if it doesn't render">
+        <noscript>Enable JavaScript to see the QR code, or use manual entry below.</noscript>
+      </div>
+      <details class="manual-entry">
+        <summary>Can't scan it? Enter this key manually instead</summary>
+        <p class="mono secret-key">${esc(secret)}</p>
+        <p class="hint">Account name: Harjote's Site — leave time-based (TOTP), 6 digits, 30 seconds if asked.</p>
+        <p class="hint">If your app accepts a setup URI directly, you can paste this instead: <span class="mono">${esc(otpauthUri)}</span></p>
+      </details>
     </div>
     <div class="admin-section">
       <p>2. Enter the current 6-digit code from the app to confirm it's working:</p>
