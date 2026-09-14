@@ -54,6 +54,51 @@
     });
   }
 
+  // ---------- scroll reveal ----------
+  // Skipped entirely under prefers-reduced-motion — no .reveal class ever
+  // gets added, so content just renders normally with nothing to animate
+  // or get stuck mid-transition. Not gated on pointer type: this should
+  // still run on touch devices, unlike the cursor/drag stuff below.
+  if (!reduceMotion) {
+    const revealTargets = document.querySelectorAll(".row, .entry, .section-head, .about-teaser");
+    const groupCounts = new Map(); // per-parent stagger index, so each list's cascade restarts instead of accumulating across the whole page
+    const supportsIO = "IntersectionObserver" in window;
+    const io = supportsIO
+      ? new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+                io.unobserve(entry.target);
+              }
+            });
+          },
+          { rootMargin: "0px 0px -10% 0px", threshold: 0.1 }
+        )
+      : null;
+
+    revealTargets.forEach((el) => {
+      const index = groupCounts.get(el.parentElement) || 0;
+      groupCounts.set(el.parentElement, index + 1);
+      el.style.transitionDelay = `${Math.min(index, 6) * 60}ms`;
+
+      el.classList.add("reveal");
+      const rect = el.getBoundingClientRect();
+      const alreadyVisible = rect.top < window.innerHeight && rect.bottom > 0;
+      if (alreadyVisible || !supportsIO) {
+        // Already on screen at load (or no IntersectionObserver support) —
+        // show it as-is. Both classes land in this same synchronous pass,
+        // before the first paint, so there's no earlier frame showing the
+        // hidden state for the transition to animate away from — it just
+        // renders visible immediately, the same as if .reveal were never
+        // there at all.
+        el.classList.add("is-visible");
+      } else {
+        io.observe(el);
+      }
+    });
+  }
+
   // ---------- custom cursor ----------
   if (reduceMotion || !hasFinePointer) return;
 

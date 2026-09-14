@@ -42,6 +42,19 @@
 }
 *{box-sizing:border-box;}
 html{scroll-behavior:smooth;}
+/* Cross-fades color/background/border changes when the theme toggle
+   flips :root's custom properties, instead of every themed element
+   snapping to its new color in the same frame. Scoped to color-ish
+   properties only (not `all`) so it can't fight layout/transform
+   transitions declared elsewhere (the cursor ring, hover states, etc. —
+   a more specific selector's own `transition` list always wins over this
+   one regardless, this is just filling in the color transition for
+   everything that doesn't already declare one). */
+@media (prefers-reduced-motion: no-preference){
+  *, *::before, *::after{
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, fill 0.3s ease, stroke 0.3s ease;
+  }
+}
 body{
   margin:0;
   background:var(--ink);
@@ -175,24 +188,29 @@ main{flex:1; min-width:0; padding:5rem 4rem 4rem;}
 .hero h1{
   font-size:clamp(2.1rem, 4.2vw, 3.1rem);
   line-height:1.15;
-  opacity:0;
-  transform:translateY(10px);
-  animation:rise 0.7s ease forwards 0.1s;
 }
 .hero p{margin-top:1.5rem; font-size:1.15rem; color:var(--text-muted); max-width:56ch;}
 
-/* ---------- bold heading rule ---------- */
+/* ---------- bold heading rule + page-load entrance ---------- */
 /* A thick accent rule under every page's h1, echoing the underline below
    "Harjote Singh" in the banner. width:fit-content keeps it under the
-   text itself rather than stretching the full column width. */
+   text itself rather than stretching the full column width. The same
+   rise-in-on-load animation used to be home-only; every page's heading
+   gets it now, so navigating anywhere has the same settled-in-place
+   arrival instead of just the homepage feeling considered. */
 .hero h1, .page-header h1, .article h1{
   width:fit-content;
   border-bottom:4px solid var(--brass);
   padding-bottom:0.55rem;
   margin-bottom:1.2rem; /* space after the rule itself — without this, anything with no margin-top of its own (like the About page's pills) sits flush against the border */
+  opacity:0;
+  transform:translateY(10px);
+  animation:rise 0.7s ease forwards 0.1s;
 }
 @keyframes rise{to{opacity:1; transform:translateY(0);}}
-@media (prefers-reduced-motion: reduce){.hero h1{animation:none; opacity:1; transform:none;}}
+@media (prefers-reduced-motion: reduce){
+  .hero h1, .page-header h1, .article h1{animation:none; opacity:1; transform:none;}
+}
 
 .hero-visual{
   width:320px;
@@ -207,6 +225,19 @@ main{flex:1; min-width:0; padding:5rem 4rem 4rem;}
 .page-header .kicker-row{margin-bottom:0.75rem;}
 .page-header h1{font-size:clamp(1.8rem, 3.4vw, 2.4rem); line-height:1.2;}
 .page-header p{margin-top:1rem; color:var(--text-muted); font-size:1.05rem; max-width:56ch;}
+
+/* ---------- scroll reveal ---------- */
+/* Applied by JS (server/public-site.js), not by default in the markup —
+   anything not yet visible on load gets .reveal (hidden, offset) added,
+   then .is-visible once it scrolls into view. Elements already in the
+   viewport at load get both classes added in the same pass, before the
+   first paint, so there's no flash of hidden content and no dependency
+   on JS for anything above the fold — see the JS comment for why. */
+.reveal{opacity:0; transform:translateY(18px);}
+.reveal.is-visible{
+  opacity:1; transform:translateY(0);
+  transition:opacity 0.6s ease, transform 0.6s ease;
+}
 
 /* ---------- section framing ---------- */
 section{margin-bottom:5.5rem;}
@@ -232,9 +263,17 @@ section{margin-bottom:5.5rem;}
   text-decoration:none;
   color:inherit;
 }
-.row:hover .row-title{color:var(--brass);}
+.row:hover .row-title{color:var(--brass); transform:translateX(6px);}
 .row .date{color:var(--text-muted); padding-top:0.2rem;}
-.row-title{font-family:"Fraunces", serif; font-size:1.2rem; font-weight:500; transition:color 0.15s ease;}
+.row-title{
+  font-family:"Fraunces", serif; font-size:1.2rem; font-weight:500;
+  display:inline-block; transition:color 0.15s ease, transform 0.2s ease;
+}
+.row-title::after{
+  content:"→"; display:inline-block; opacity:0;
+  margin-left:0.3em; transition:opacity 0.2s ease, margin-left 0.2s ease;
+}
+.row:hover .row-title::after{opacity:1; margin-left:0.5em;}
 .row-dek{margin-top:0.4rem; font-style:italic; color:var(--text-muted); font-size:1rem;}
 
 /* ---------- travel log ---------- */
@@ -265,8 +304,16 @@ section{margin-bottom:5.5rem;}
   border:2px solid var(--ink);
 }
 .entry .coords{color:var(--sage);}
-.entry .place{font-family:"Fraunces", serif; font-size:1.15rem; font-weight:500; transition:color 0.15s ease;}
-.entry:hover .place{color:var(--brass);}
+.entry .place{
+  font-family:"Fraunces", serif; font-size:1.15rem; font-weight:500;
+  display:inline-block; transition:color 0.15s ease, transform 0.2s ease;
+}
+.entry .place::after{
+  content:"→"; display:inline-block; opacity:0;
+  margin-left:0.3em; transition:opacity 0.2s ease, margin-left 0.2s ease;
+}
+.entry:hover .place{color:var(--brass); transform:translateX(6px);}
+.entry:hover .place::after{opacity:1; margin-left:0.5em;}
 .entry .note{color:var(--text-muted); margin-top:0.3rem;}
 
 /* ---------- about teaser ---------- */
