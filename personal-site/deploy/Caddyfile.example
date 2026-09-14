@@ -1,0 +1,32 @@
+# Example Caddy config for harjote.com, split into two listeners:
+#
+#   1. The public site (harjote.com) — serves everything EXCEPT the admin
+#      panel. Any request matching an admin-only path gets a plain 404,
+#      identical to a real unknown route, before it ever reaches Node.
+#
+#   2. A private listener bound to this server's Tailscale IP — reachable
+#      only from devices on your tailnet, not from the public internet.
+#      It proxies the whole app, including /admin, to the same Node
+#      process. This is where you log in from.
+#
+# Replace 100.x.y.z below with this server's actual Tailscale IP
+# (run `tailscale ip -4` on the server once Tailscale is installed and
+# joined to your tailnet — see the "Admin access via Tailscale" section
+# of the README).
+
+harjote.com {
+	# Every route the app treats as admin-only. Keep this list in sync
+	# with the isAdminArea check in server/server.js.
+	@admin path /admin /admin/* /writing/new /writing/*/edit /writing/*/delete /travel/new /travel/*/edit /travel/*/delete
+	respond @admin 404
+
+	reverse_proxy localhost:3000
+}
+
+http://100.x.y.z:8080 {
+	# No TLS here on purpose: this listener only exists on the Tailscale
+	# interface, and Tailscale's WireGuard tunnel already encrypts
+	# everything between your device and this server. Nothing outside
+	# your tailnet can even reach this IP.
+	reverse_proxy localhost:3000
+}

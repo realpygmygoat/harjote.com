@@ -1,0 +1,425 @@
+/* Dark is the default/base theme (:root, unstamped) — matches how the
+   site has looked all along, so anyone without JS, or before theme-init.js
+   runs, gets exactly what they'd expect. Light mode only applies via an
+   explicit [data-theme="light"] on <html>, set by the toggle button (see
+   server/public-site.js) and persisted through theme-init.js — there's no
+   automatic prefers-color-scheme switch, on purpose: this is a deliberate
+   dark-first design, not a utility app that should just match the OS. */
+:root{
+  --ink:#14181D;
+  --surface:#1B2129;
+  --paper:#EDE6D6;
+  --text:#E7E2D4;
+  --text-muted:#9BA3AC;
+  --brass:#C89B3C;
+  --sage:#6B8A7A;
+  --grey:#4a453c;
+  --rule:#2B333C;
+  --sidebar-w: 240px;
+}
+/* Light mode: the LinkedIn banner's actual palette (white/navy/teal),
+   sampled from the real file rather than eyeballed — same source as the
+   teal used elsewhere on the site. --ink keeps its role as "the page
+   background," just inverted to white; --paper flips to dark navy instead
+   of staying pale, so the About-teaser card still reads as a distinct
+   surface against the new white page instead of nearly disappearing into
+   it (a light cream card popping on a dark page, mirrored as a dark navy
+   card popping on a light one). --sage is intentionally darker than the
+   banner's own lightest dot tone — the literal sampled color reads fine
+   as an icon fill but is too low-contrast for the small mono text it's
+   also used for here (kickers, dates), so it's a deliberate readability
+   adjustment, not a mismatch. */
+:root[data-theme="light"]{
+  --ink:#FFFFFF;
+  --surface:#EEF4F4;
+  --paper:#203348;
+  --text:#203348;
+  --text-muted:#55677A;
+  --brass:#225D61;
+  --sage:#2D7376;
+  --grey:#B8C4C4;
+  --rule:#DDE5E5;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--ink);
+  color:var(--text);
+  font-family:"Newsreader", Georgia, serif;
+  line-height:1.6;
+}
+/* A fixed dot-texture layer, echoing the halftone pattern from the
+   LinkedIn banner recolored to brass/sage. z-index:-1 paints it above
+   body's own flat background but below every normal-flow element on the
+   page (see CSS painting order), so it never sits over — or fights the
+   legibility of — real content. The mask concentrates it toward the
+   edges and fades it out over the main reading column, the same
+   composition the banner itself uses (dots at the margins, clear behind
+   the text). */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background-image:
+    radial-gradient(circle, var(--brass) 1.4px, transparent 1.4px),
+    radial-gradient(circle, var(--sage) 1.4px, transparent 1.4px);
+  background-size:28px 28px, 28px 28px;
+  background-position:0 0, 14px 14px;
+  -webkit-mask-image:radial-gradient(ellipse 70% 65% at 50% 45%, transparent 35%, black 85%);
+  mask-image:radial-gradient(ellipse 70% 65% at 50% 45%, transparent 35%, black 85%);
+  opacity:0.22;
+}
+a{color:inherit;}
+::selection{background:var(--brass); color:var(--ink);}
+a:focus-visible, button:focus-visible{
+  outline:2px solid var(--brass);
+  outline-offset:3px;
+}
+h1, h2, h3, .display{
+  font-family:"Fraunces", Georgia, serif;
+  font-weight:600;
+  letter-spacing:-0.01em;
+  margin:0;
+}
+.mono{
+  font-family:"IBM Plex Mono", monospace;
+  font-size:0.78rem;
+  letter-spacing:0.01em;
+}
+
+/* ---------- layout shell ---------- */
+.shell{
+  display:flex;
+  max-width:1180px;
+  margin:0 auto;
+}
+.sidebar{
+  width:var(--sidebar-w);
+  flex-shrink:0;
+  position:sticky;
+  top:0;
+  height:100vh;
+  padding:3rem 2rem;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  border-right:1px solid var(--rule);
+}
+.mark{
+  font-family:"Fraunces", serif;
+  font-size:1.15rem;
+  font-weight:600;
+  color:var(--text);
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:0.5rem;
+}
+.mark span{color:var(--brass);}
+
+/* ---------- chevron mark ---------- */
+/* The three-triangle motif from the banner (solid brass, solid sage,
+   outlined) — a small recurring graphic rather than a one-off logo. */
+.chevron-mark{flex-shrink:0; display:inline-block; vertical-align:middle;}
+.chevron-fill-brass{fill:var(--brass);}
+.chevron-fill-sage{fill:var(--sage);}
+.chevron-outline{fill:none; stroke:var(--text-muted); stroke-width:2;}
+.kicker-row{display:flex; align-items:center; gap:0.55rem;}
+nav.primary{margin-top:3rem;}
+nav.primary a{
+  display:block;
+  text-decoration:none;
+  color:var(--text-muted);
+  font-family:"Newsreader", serif;
+  font-size:1.05rem;
+  padding:0.4rem 0;
+  transition:color 0.15s ease;
+}
+nav.primary a:hover, nav.primary a.active{color:var(--brass);}
+.now{color:var(--text-muted);}
+.now .mono{color:var(--sage); display:block; margin-bottom:0.3rem;}
+.social{margin-top:1.5rem;}
+.social a{
+  text-decoration:none;
+  color:var(--text-muted);
+  margin-right:1rem;
+  font-size:0.85rem;
+  border-bottom:1px solid transparent;
+}
+.social a:hover{color:var(--brass); border-bottom-color:var(--brass);}
+
+.theme-toggle{
+  display:block;
+  margin-top:1.25rem;
+  padding:0.35rem 0;
+  background:none;
+  border:none;
+  color:var(--text-muted);
+  cursor:pointer;
+  font-size:0.78rem;
+  text-align:left;
+  transition:color 0.15s ease;
+}
+.theme-toggle:hover{color:var(--brass);}
+
+main{flex:1; min-width:0; padding:5rem 4rem 4rem;}
+
+/* ---------- hero / page header ---------- */
+.hero{display:flex; align-items:center; gap:2.5rem; margin-bottom:6rem;}
+.hero-text{max-width:680px; flex:1; min-width:0;}
+.hero .kicker{color:var(--sage);}
+.hero .kicker-row{margin-bottom:1rem;}
+.hero h1{
+  font-size:clamp(2.1rem, 4.2vw, 3.1rem);
+  line-height:1.15;
+  opacity:0;
+  transform:translateY(10px);
+  animation:rise 0.7s ease forwards 0.1s;
+}
+.hero p{margin-top:1.5rem; font-size:1.15rem; color:var(--text-muted); max-width:56ch;}
+
+/* ---------- bold heading rule ---------- */
+/* A thick accent rule under every page's h1, echoing the underline below
+   "Harjote Singh" in the banner. width:fit-content keeps it under the
+   text itself rather than stretching the full column width. */
+.hero h1, .page-header h1, .article h1{
+  width:fit-content;
+  border-bottom:4px solid var(--brass);
+  padding-bottom:0.55rem;
+}
+@keyframes rise{to{opacity:1; transform:translateY(0);}}
+@media (prefers-reduced-motion: reduce){.hero h1{animation:none; opacity:1; transform:none;}}
+
+.hero-visual{
+  width:320px;
+  height:320px;
+  flex-shrink:0;
+}
+.hero-visual canvas{display:block;}
+@media (max-width: 1000px){.hero-visual{width:230px; height:230px;}}
+
+.page-header{max-width:680px; margin-bottom:3.5rem;}
+.page-header .kicker{color:var(--sage);}
+.page-header .kicker-row{margin-bottom:0.75rem;}
+.page-header h1{font-size:clamp(1.8rem, 3.4vw, 2.4rem); line-height:1.2;}
+.page-header p{margin-top:1rem; color:var(--text-muted); font-size:1.05rem; max-width:56ch;}
+
+/* ---------- section framing ---------- */
+section{margin-bottom:5.5rem;}
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  border-bottom:1px solid var(--rule);
+  padding-bottom:0.75rem;
+  margin-bottom:0.5rem;
+}
+.section-head-title{display:flex; align-items:center; gap:0.6rem;}
+.section-head h2{font-size:1.4rem;}
+.section-head .count{color:var(--text-muted);}
+
+/* ---------- writing rows ---------- */
+.row{
+  display:grid;
+  grid-template-columns:110px 1fr;
+  gap:1.5rem;
+  padding:1.6rem 0;
+  border-bottom:1px solid var(--rule);
+  text-decoration:none;
+  color:inherit;
+}
+.row:hover .row-title{color:var(--brass);}
+.row .date{color:var(--text-muted); padding-top:0.2rem;}
+.row-title{font-family:"Fraunces", serif; font-size:1.2rem; font-weight:500; transition:color 0.15s ease;}
+.row-dek{margin-top:0.4rem; font-style:italic; color:var(--text-muted); font-size:1rem;}
+
+/* ---------- travel log ---------- */
+.log{position:relative; padding-left:1.6rem;}
+.log::before{
+  content:"";
+  position:absolute;
+  left:4px; top:0.6rem; bottom:0.6rem;
+  width:1px;
+  background:var(--rule);
+}
+.entry{
+  position:relative;
+  padding:1.4rem 0;
+  display:grid;
+  grid-template-columns:200px 1fr;
+  gap:1.5rem;
+  text-decoration:none;
+  color:inherit;
+}
+.entry::before{
+  content:"";
+  position:absolute;
+  left:-1.6rem; top:1.7rem;
+  width:9px; height:9px;
+  border-radius:50%;
+  background:var(--sage);
+  border:2px solid var(--ink);
+}
+.entry .coords{color:var(--sage);}
+.entry .place{font-family:"Fraunces", serif; font-size:1.15rem; font-weight:500; transition:color 0.15s ease;}
+.entry:hover .place{color:var(--brass);}
+.entry .note{color:var(--text-muted); margin-top:0.3rem;}
+
+/* ---------- about teaser ---------- */
+.about-teaser{
+  background:var(--paper);
+  color:var(--ink);
+  border-radius:2px;
+  padding:2.5rem;
+  max-width:680px;
+}
+.about-teaser p{font-size:1.1rem;}
+.about-teaser a{color:var(--ink); border-bottom:1px solid var(--brass); text-decoration:none;}
+
+/* ---------- long-form article body (posts / entries / about) ---------- */
+.article{max-width:640px;}
+.article .kicker{color:var(--sage);}
+.article .kicker-row{margin-bottom:0.75rem;}
+
+/* ---------- pill badges ---------- */
+/* The rounded badge treatment from the banner — a deliberate departure
+   from the site's usual sharp 2px corners, kept to this one spot so it
+   reads as a borrowed accent rather than a new site-wide shape language. */
+.focus-areas{display:flex; flex-wrap:wrap; gap:0.6rem; margin:0 0 1.2rem;}
+.pill{
+  font-family:"IBM Plex Mono", monospace;
+  font-size:0.78rem;
+  letter-spacing:0.02em;
+  padding:0.4rem 1rem;
+  border-radius:999px;
+  background:var(--brass);
+  color:var(--ink);
+}
+.pill-sage{background:var(--sage);}
+.article h2{font-size:1.5rem; margin-top:2.2rem; margin-bottom:0.8rem;}
+.article h3{font-size:1.2rem; margin-top:1.8rem; margin-bottom:0.6rem;}
+.article p{margin:0 0 1.2rem;}
+.article a{color:var(--brass); text-decoration:underline;}
+.article ul, .article ol{margin:0 0 1.2rem; padding-left:1.4rem;}
+.article li{margin-bottom:0.4rem;}
+.article blockquote{
+  margin:1.6rem 0;
+  padding-left:1.2rem;
+  border-left:2px solid var(--brass);
+  color:var(--text-muted);
+  font-style:italic;
+}
+.article code{
+  font-family:"IBM Plex Mono", monospace;
+  font-size:0.85em;
+  background:var(--surface);
+  padding:0.1em 0.35em;
+  border-radius:2px;
+}
+.article img{max-width:100%; border-radius:2px; margin:1.5rem 0;}
+.article .meta{color:var(--text-muted); margin-bottom:2rem;}
+.article .meta .mono{color:var(--sage);}
+
+/* ---------- about photo ---------- */
+.article .about-photo{
+  float:right;
+  width:320px;
+  margin:0 -1rem 1rem 1.5rem;
+  /* The PNG has real alpha (a genuine cutout, not a rectangle), so the
+     wrap shape is traced from the image's own silhouette instead of its
+     bounding box — text follows your actual outline, not a box edge.
+     shape-image-threshold picks how opaque a pixel must be to count as
+     "inside": 0.5 keeps soft/anti-aliased edge pixels from leaving a
+     stray sliver text could collide with. */
+  shape-outside:url(/assets/harjote.png);
+  shape-image-threshold:0.5;
+  shape-margin:1.1rem;
+}
+@media (max-width: 640px){
+  .article .about-photo{
+    float:none;
+    display:block;
+    width:230px;
+    margin:0 auto 2rem;
+    shape-outside:none;
+  }
+}
+
+.back-link{
+  display:inline-block;
+  margin-bottom:2.5rem;
+  color:var(--text-muted);
+  text-decoration:none;
+  font-size:0.95rem;
+}
+.back-link:hover{color:var(--brass);}
+
+footer{
+  border-top:1px solid var(--rule);
+  padding-top:2rem;
+  color:var(--text-muted);
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:1rem;
+}
+footer a{text-decoration:none; color:var(--text-muted);}
+footer a:hover{color:var(--brass);}
+
+/* ---------- custom cursor ---------- */
+/* Only applied once JS confirms a fine-pointer device without
+   prefers-reduced-motion — see server/public-site.js. Without JS, or on
+   touch, the native cursor is untouched. */
+html.has-custom-cursor, html.has-custom-cursor a, html.has-custom-cursor button{
+  cursor:none;
+}
+.cursor-dot, .cursor-ring{
+  position:fixed;
+  top:0; left:0;
+  opacity:0;
+  pointer-events:none;
+  z-index:999;
+  border-radius:50%;
+  will-change:transform;
+}
+.cursor-dot{
+  width:8px; height:8px;
+  margin:-4px 0 0 -4px;
+  background:var(--brass);
+  transition:opacity 0.2s ease;
+}
+.cursor-ring{
+  width:36px; height:36px;
+  margin:-18px 0 0 -18px;
+  border:1px solid var(--grey);
+  transition:opacity 0.2s ease, width 0.2s ease, height 0.2s ease, margin 0.2s ease, background 0.2s ease;
+}
+.cursor-ring.is-active{
+  width:56px; height:56px;
+  margin:-28px 0 0 -28px;
+  background:color-mix(in srgb, var(--brass) 12%, transparent); /* was a hardcoded brass rgba() — didn't track the theme */
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 860px){
+  .shell{flex-direction:column;}
+  .sidebar{
+    position:relative; width:100%; height:auto;
+    flex-direction:row; align-items:center; justify-content:space-between;
+    border-right:none; border-bottom:1px solid var(--rule);
+    padding:1.5rem;
+  }
+  nav.primary{margin-top:0; display:flex; gap:1.2rem;}
+  nav.primary a{padding:0;}
+  .now, .social{display:none;}
+  main{padding:3rem 1.5rem;}
+  .hero{flex-direction:column; gap:1.5rem;}
+  .hero-visual{width:210px; height:210px; align-self:center;}
+  .row, .entry{grid-template-columns:1fr;}
+  .row .date{padding-top:0;}
+  .log{padding-left:1.2rem;}
+  .entry::before{left:-1.2rem;}
+}
