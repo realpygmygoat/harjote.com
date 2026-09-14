@@ -451,6 +451,54 @@ html.has-custom-cursor, html.has-custom-cursor a, html.has-custom-cursor button{
   background:color-mix(in srgb, var(--brass) 12%, transparent); /* was a hardcoded brass rgba() — didn't track the theme */
 }
 
+/* ---------- page transition curtain ---------- */
+/* The site has no client-side router — every navigation is a real page
+   load — so a single DOM element can't literally travel between the old
+   page and the new one. This fakes that with two halves that share one
+   direction (always left-to-right) so they read as one continuous sweep:
+   on the page you're leaving, the curtain slides in from off-screen left
+   to fully cover the viewport, then the real navigation fires; the page
+   you land on starts already in that same covered state (its default,
+   pre-JS CSS position, so there's nothing to flash past) and immediately
+   continues the same left-to-right motion on off past the right edge,
+   uncovering the new content as it goes. See server/page-transition.js.
+   Styled to echo the real sidebar (same background, same wordmark
+   position) so the covered instant reads as "the nav bar took over the
+   screen," not a generic loading overlay. */
+.page-curtain{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  background:var(--ink);
+  border-right:1px solid var(--rule);
+  padding:3rem 2rem;
+  pointer-events:none;
+  transform:translateX(0); /* default = covering, so a fresh load hides nothing but this */
+  transition:none;
+}
+.page-curtain.is-animating{transition:transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);}
+.page-curtain.is-parked{transform:translateX(-100%);}
+.page-curtain.is-revealed{transform:translateX(100%);}
+.curtain-mark{pointer-events:none;}
+@media (prefers-reduced-motion: reduce){
+  .page-curtain{display:none;}
+}
+
+/* ---------- ripple dot field ---------- */
+/* Progressive enhancement over the static body::before dots above: when
+   JS + canvas + motion are all available, page-transition.js's sibling
+   (dot-field.js) draws the identical grid on a canvas and hides this
+   pseudo-element, so the two never show at once. Anyone without JS, or
+   with prefers-reduced-motion, just keeps the plain CSS dots — nothing
+   here depends on the canvas existing. */
+html.has-dot-canvas body::before{display:none;}
+#dot-field{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+}
+
 /* ---------- responsive ---------- */
 @media (max-width: 860px){
   .shell{flex-direction:column;}

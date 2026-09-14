@@ -42,6 +42,9 @@ function layout({ title, active, bodyHtml, now }) {
 <link rel="stylesheet" href="/assets/styles.css">
 </head>
 <body>
+<div class="page-curtain" aria-hidden="true">
+  <span class="mark curtain-mark">Harjote<span>.</span>${chevronMark(15)}</span>
+</div>
 <div class="shell">
   <aside class="sidebar">
     <div>
@@ -68,6 +71,8 @@ function layout({ title, active, bodyHtml, now }) {
     ${bodyHtml}
   </main>
 </div>
+<script src="/assets/page-transition.js" defer></script>
+<script src="/assets/dot-field.js" defer></script>
 <script src="/assets/lenis.min.js" defer></script>
 <script src="/assets/site.js" defer></script>
 ${active === "home" ? '<script type="module" src="/assets/compass-scene.js"></script>' : ""}

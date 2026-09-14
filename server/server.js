@@ -32,6 +32,8 @@ const ASSETS = {
   "/assets/compass-scene.js": { file: path.join(__dirname, "compass-scene.js"), type: "application/javascript; charset=utf-8" },
   "/assets/harjote.png": { file: path.join(__dirname, "media", "harjote.png"), type: "image/png" },
   "/assets/theme-init.js": { file: path.join(__dirname, "theme-init.js"), type: "application/javascript; charset=utf-8" },
+  "/assets/page-transition.js": { file: path.join(__dirname, "page-transition.js"), type: "application/javascript; charset=utf-8" },
+  "/assets/dot-field.js": { file: path.join(__dirname, "dot-field.js"), type: "application/javascript; charset=utf-8" },
 };
 
 const SECURITY_HEADERS = {
