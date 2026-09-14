@@ -23,6 +23,13 @@
   let ready = false; // true once the on-load reveal has parked the curtain off-left
   let exiting = false; // true once a click has started the cover-and-navigate sequence
 
+  // Must stay longer than the CSS transition duration (.page-curtain.is-animating
+  // in styles.css) — this is only a safety net for when transitionend never
+  // fires (a backgrounded tab, etc.), and firing it before the real animation
+  // finishes would cut the sweep short. Keep the two in sync if you change
+  // one — this leaves a 150ms cushion over the current 1s duration.
+  const FALLBACK_MS = 1150;
+
   function forceReflow() {
     // Reading a layout property flushes pending style changes, so a class
     // added right after this is guaranteed to animate from the previous
@@ -58,7 +65,7 @@
       curtain.removeEventListener("transitionend", onEnd);
       finish();
     });
-    setTimeout(finish, 700); // fallback in case transitionend never fires (e.g. a backgrounded tab)
+    setTimeout(finish, FALLBACK_MS);
   }
 
   function coverAndGo(href) {
@@ -78,7 +85,7 @@
       curtain.removeEventListener("transitionend", onEnd);
       go();
     });
-    setTimeout(go, 700);
+    setTimeout(go, FALLBACK_MS);
   }
 
   // Two rAFs, not one: the first is called before the browser has

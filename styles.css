@@ -473,13 +473,26 @@ html.has-custom-cursor, html.has-custom-cursor a, html.has-custom-cursor button{
   border-right:1px solid var(--rule);
   padding:3rem 2rem;
   pointer-events:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   transform:translateX(0); /* default = covering, so a fresh load hides nothing but this */
   transition:none;
 }
 .page-curtain.is-animating{transition:transform 1s cubic-bezier(0.65, 0, 0.35, 1);}
 .page-curtain.is-parked{transform:translateX(-100%);}
 .page-curtain.is-revealed{transform:translateX(100%);}
-.curtain-mark{pointer-events:none;}
+/* Big and centered so it actually reads during the sweep, instead of
+   sitting small in the corner the way the real sidebar wordmark does —
+   .curtain-mark overrides .mark's own font-size here. The chevron SVG's
+   width/height attributes get overridden to 1em/auto so it scales right
+   along with the text instead of staying pinned at its markup size. */
+.mark.curtain-mark{
+  pointer-events:none;
+  font-size:clamp(2.75rem, 8vw, 5.5rem);
+  gap:0.5em;
+}
+.curtain-mark .chevron-mark{width:auto; height:1em;}
 @media (prefers-reduced-motion: reduce){
   .page-curtain{display:none;}
 }
