@@ -476,7 +476,7 @@ html.has-custom-cursor, html.has-custom-cursor a, html.has-custom-cursor button{
   transform:translateX(0); /* default = covering, so a fresh load hides nothing but this */
   transition:none;
 }
-.page-curtain.is-animating{transition:transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);}
+.page-curtain.is-animating{transition:transform 1s cubic-bezier(0.65, 0, 0.35, 1);}
 .page-curtain.is-parked{transform:translateX(-100%);}
 .page-curtain.is-revealed{transform:translateX(100%);}
 .curtain-mark{pointer-events:none;}
