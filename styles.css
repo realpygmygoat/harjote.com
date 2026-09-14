@@ -189,6 +189,7 @@ main{flex:1; min-width:0; padding:5rem 4rem 4rem;}
   width:fit-content;
   border-bottom:4px solid var(--brass);
   padding-bottom:0.55rem;
+  margin-bottom:1.2rem; /* space after the rule itself — without this, anything with no margin-top of its own (like the About page's pills) sits flush against the border */
 }
 @keyframes rise{to{opacity:1; transform:translateY(0);}}
 @media (prefers-reduced-motion: reduce){.hero h1{animation:none; opacity:1; transform:none;}}
