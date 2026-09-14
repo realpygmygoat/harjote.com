@@ -135,10 +135,20 @@
       return;
     }
     if (url.origin !== window.location.origin) return;
-    // A same-page hash link (or a link to the exact page you're already
-    // on) isn't a real navigation — let it behave natively rather than
-    // running a curtain sweep to nowhere.
-    if (url.pathname === window.location.pathname && url.search === window.location.search) return;
+
+    // A bare "#" (the placeholder social links) or a real same-page anchor
+    // jump (href="#section") isn't a navigation — nothing to reload, so
+    // let it behave natively rather than running a curtain sweep to
+    // nowhere. A link that happens to point at the exact page you're
+    // already on (e.g. clicking "Writing" while already on Writing) is
+    // different: clicking it genuinely reloads the page (confirmed — it's
+    // real browser behavior, not a no-op), so it should get the same
+    // animated sweep as any other navigation instead of an abrupt,
+    // unanimated native reload.
+    const rawHref = link.getAttribute("href") || "";
+    const isBarePlaceholder = rawHref === "#";
+    const isSamePageAnchor = url.hash !== "" && url.pathname === window.location.pathname && url.search === window.location.search;
+    if (isBarePlaceholder || isSamePageAnchor) return;
 
     e.preventDefault();
     coverAndGo(link.href);
