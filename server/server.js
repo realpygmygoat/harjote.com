@@ -11,6 +11,15 @@ const admin = require("./views/admin");
 const { mdToHtml, byDateDesc, slugify } = require("./lib/markdown");
 
 const PORT = process.env.PORT || 3000;
+// Default to localhost-only — the README's self-hosting section (and the
+// Tailscale/Caddy setup for keeping /admin off the public internet) both
+// assume this. Without an explicit host, Node's http.Server.listen()
+// binds to every interface (confirmed: it listens on "::", not
+// "127.0.0.1"), which would let anyone reach this process directly on a
+// VPS's public IP, bypassing the reverse proxy entirely. Override with
+// HOST=0.0.0.0 only if you specifically need that (e.g. inside a
+// container where the container boundary is the real isolation).
+const HOST = process.env.HOST || "127.0.0.1";
 const ASSETS = {
   "/assets/styles.css": { file: path.join(__dirname, "..", "styles.css"), type: "text/css; charset=utf-8" },
   "/assets/admin.css": { file: path.join(__dirname, "admin.css"), type: "text/css; charset=utf-8" },
@@ -464,7 +473,7 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, HOST, () => {
   console.log(`Site running at http://localhost:${PORT}`);
   if (!db.anyUserExists()) {
     console.log(`No admin account yet — visit http://localhost:${PORT}/admin/login to create one.`);
