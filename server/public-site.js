@@ -12,6 +12,18 @@
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
 
+  // The site is zoomed via CSS (html{zoom:1.25} in styles.css) rather than
+  // a root font-size bump, so every length unit — including the pixel
+  // values inside a `transform`, not just text/spacing — scales up too.
+  // Mouse coordinates (clientX/clientY) already come through in that same
+  // zoomed/visual space, so setting `transform: translate(mouseX, ...)`
+  // directly would get zoomed a SECOND time by the ancestor's zoom,
+  // landing the element at 1.25x the real cursor position. Dividing by
+  // the zoom factor here cancels that out — confirmed by dispatching a
+  // synthetic mousemove and checking the cursor dot landed exactly on
+  // the dispatched coordinate, not 1.25x past it.
+  const pageZoom = parseFloat(getComputedStyle(document.documentElement).zoom) || 1;
+
   // ---------- theme toggle ----------
   // Placed before the reduceMotion/coarse-pointer early-return below —
   // this is a real control, not a decorative motion feature, so it has to
@@ -114,8 +126,11 @@
       });
       btn.addEventListener("mousemove", (e) => {
         const r = btn.getBoundingClientRect();
-        const relX = e.clientX - (r.left + r.width / 2);
-        const relY = e.clientY - (r.top + r.height / 2);
+        // Divided by pageZoom for the same reason as the cursor below —
+        // this value ends up inside a `transform`, which the page's own
+        // zoom would otherwise apply a second time.
+        const relX = (e.clientX - (r.left + r.width / 2)) / pageZoom;
+        const relY = (e.clientY - (r.top + r.height / 2)) / pageZoom;
         const x = Math.max(-MAX_OFFSET, Math.min(MAX_OFFSET, relX * STRENGTH));
         const y = Math.max(-MAX_OFFSET, Math.min(MAX_OFFSET, relY * STRENGTH));
         btn.style.transform = `translate(${x}px, ${y}px)`;
@@ -142,8 +157,12 @@
   let primed = false; // avoid a jump-in from (0,0) before the first real move
 
   window.addEventListener("mousemove", (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
+    // Divided by pageZoom once here, at the source — everything downstream
+    // (this dot's own transform, and the ring's eased chase toward
+    // mouseX/mouseY in the tick() loop below) then just works, without
+    // needing the same compensation repeated at every call site.
+    mouseX = e.clientX / pageZoom;
+    mouseY = e.clientY / pageZoom;
     if (!primed) {
       ringX = mouseX;
       ringY = mouseY;

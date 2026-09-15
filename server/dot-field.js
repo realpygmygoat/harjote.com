@@ -45,13 +45,21 @@
   }
 
   function resize() {
-    cssW = window.innerWidth;
-    cssH = window.innerHeight;
+    // Reads the canvas's own actual rendered box (its CSS already fills the
+    // viewport via position:fixed + inset:0 in styles.css, no explicit
+    // width/height needed here) instead of window.innerWidth/innerHeight.
+    // Under the site's CSS zoom, those differ — innerWidth stays at the
+    // logical, un-zoomed size, while the canvas's rendered box (and real
+    // pointer coordinates, which arrive in this same space) are 1.25x
+    // bigger. Sizing the internal bitmap from the real rendered box keeps
+    // it crisp instead of stretched, and keeps a click's coordinates
+    // aligned with the grid without a separate compensation step.
+    const rect = canvas.getBoundingClientRect();
+    cssW = rect.width;
+    cssH = rect.height;
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(cssW * dpr);
     canvas.height = Math.round(cssH * dpr);
-    canvas.style.width = cssW + "px";
-    canvas.style.height = cssH + "px";
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     draw(0);
   }

@@ -41,7 +41,17 @@
   --rule:#DDE5E5;
 }
 *{box-sizing:border-box;}
-html{scroll-behavior:smooth;}
+/* Defaults the whole site to what 125% browser zoom already looked like,
+   without asking every visitor to zoom manually. Deliberately `zoom`, not
+   a root font-size bump: font-size only scales rem-based text/spacing,
+   leaving every px-based max-width (the article column, .hero-text, etc.)
+   the same absolute size — bigger text in an unchanged-width container is
+   exactly what caused the aggressive one-word-per-line wrapping. `zoom`
+   is the same mechanism a real browser zoom control uses: it scales
+   every length unit at once (px included), so text and the space it
+   wraps within grow together and wrapping stays identical to un-zoomed,
+   just bigger — matching the reference screenshots exactly. */
+html{scroll-behavior:smooth; zoom:1.25;}
 /* Cross-fades color/background/border changes when the theme toggle
    flips :root's custom properties, instead of every themed element
    snapping to its new color in the same frame. Scoped to color-ish
@@ -474,20 +484,20 @@ html.has-custom-cursor, html.has-custom-cursor a, html.has-custom-cursor button{
   will-change:transform;
 }
 .cursor-dot{
-  width:8px; height:8px;
-  margin:-4px 0 0 -4px;
+  width:6px; height:6px;
+  margin:-3px 0 0 -3px;
   background:var(--brass);
   transition:opacity 0.2s ease;
 }
 .cursor-ring{
-  width:36px; height:36px;
-  margin:-18px 0 0 -18px;
+  width:32px; height:32px;
+  margin:-16px 0 0 -16px;
   border:1px solid var(--grey);
   transition:opacity 0.2s ease, width 0.2s ease, height 0.2s ease, margin 0.2s ease, background 0.2s ease;
 }
 .cursor-ring.is-active{
-  width:56px; height:56px;
-  margin:-28px 0 0 -28px;
+  width:52px; height:52px;
+  margin:-26px 0 0 -26px;
   background:color-mix(in srgb, var(--brass) 12%, transparent); /* was a hardcoded brass rgba() — didn't track the theme */
 }
 
@@ -548,6 +558,13 @@ html.has-dot-canvas body::before{display:none;}
 #dot-field{
   position:fixed;
   inset:0;
+  /* Explicit 100% alongside inset:0, not just inset:0 alone — a <canvas>
+     is a "replaced element" (like <img>), and its own width/height
+     *content attributes* (set in dot-field.js to control the internal
+     bitmap's pixel resolution) can otherwise end up dictating its CSS
+     box size too, instead of stretching to fill the fixed viewport. */
+  width:100%;
+  height:100%;
   z-index:-1;
   pointer-events:none;
 }
