@@ -44,7 +44,7 @@
   --brass:#225D61;
   --sage:#2D7376;
   --grey:#B8C4C4;
-  --rule:#2D7376; /* was a near-invisible #DDE5E5 — too close to --ink to actually read as a line */
+  --rule:#B8C4C4; /* was a near-invisible #DDE5E5, then a too-saturated #2D7376 (same hue as --sage, reads as an accent not a divider) — reusing --grey instead, which is already the palette's dedicated soft/muted tone */
 }
 *{box-sizing:border-box;}
 /* Defaults the whole site to what 125% browser zoom already looked like,
