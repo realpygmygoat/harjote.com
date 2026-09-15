@@ -323,7 +323,45 @@ section{margin-bottom:5.5rem;}
    paragraphs above it, instead of looking like a separate component. */
 .about-teaser{max-width:680px;}
 .about-teaser p{font-size:1.1rem; color:var(--text-muted);}
-.about-teaser a{color:var(--brass); text-decoration:underline;}
+.about-teaser a:not(.magnetic-btn){color:var(--brass); text-decoration:underline;}
+
+/* ---------- magnetic button ---------- */
+/* A bordered CTA button that gently follows the cursor while hovered, then
+   springs back to rest the instant the cursor leaves its bounds — the
+   BEHAVIOR is modeled on a button seen on another portfolio site, rebuilt
+   here from scratch in this site's own colors (see server/public-site.js
+   for the tracking/release logic; this just defines the resting look and
+   the two transition speeds it swaps between). */
+.magnetic-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:0.6em;
+  margin-top:0.5rem;
+  padding:0.75rem 1.4rem;
+  border:1px solid color-mix(in srgb, var(--brass) 45%, transparent);
+  border-radius:8px;
+  background:var(--surface);
+  color:var(--text);
+  font-family:"IBM Plex Mono", monospace;
+  font-size:0.85rem;
+  letter-spacing:0.02em;
+  text-decoration:none;
+  /* Quick, linear response while actively tracking the cursor... */
+  transition:transform 0.15s ease-out, border-color 0.2s ease, color 0.2s ease;
+}
+.magnetic-btn:hover{
+  border-color:var(--brass);
+  color:var(--brass);
+}
+/* ...swapped for a slower, overshoot-then-settle curve only on release
+   (added by JS right as the cursor leaves), so the snap-back actually
+   feels springy instead of just retracing the same path in reverse. */
+.magnetic-btn.is-returning{
+  transition:transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease, color 0.2s ease;
+}
+@media (prefers-reduced-motion: reduce){
+  .magnetic-btn{transition:border-color 0.2s ease, color 0.2s ease;}
+}
 
 /* ---------- long-form article body (posts / entries / about) ---------- */
 .article{max-width:640px;}

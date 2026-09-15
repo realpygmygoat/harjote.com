@@ -99,6 +99,34 @@
     });
   }
 
+  // ---------- magnetic buttons ----------
+  // A CTA button that gently follows the cursor while hovered, then springs
+  // back to rest the instant the cursor leaves its bounds. Same fine-pointer
+  // + motion gate as the custom cursor below — this is a hover effect, and
+  // there's no such thing as "hover" on a touch device.
+  if (!reduceMotion && hasFinePointer) {
+    document.querySelectorAll(".magnetic-btn").forEach((btn) => {
+      const STRENGTH = 0.35; // how much of the cursor's offset the button actually follows
+      const MAX_OFFSET = 14; // px — keeps the pull noticeable without letting the button wander far from its border
+
+      btn.addEventListener("mouseenter", () => {
+        btn.classList.remove("is-returning"); // back to the quick tracking transition for this pass
+      });
+      btn.addEventListener("mousemove", (e) => {
+        const r = btn.getBoundingClientRect();
+        const relX = e.clientX - (r.left + r.width / 2);
+        const relY = e.clientY - (r.top + r.height / 2);
+        const x = Math.max(-MAX_OFFSET, Math.min(MAX_OFFSET, relX * STRENGTH));
+        const y = Math.max(-MAX_OFFSET, Math.min(MAX_OFFSET, relY * STRENGTH));
+        btn.style.transform = `translate(${x}px, ${y}px)`;
+      });
+      btn.addEventListener("mouseleave", () => {
+        btn.classList.add("is-returning"); // swap to the bouncy release transition (see styles.css)
+        btn.style.transform = "translate(0, 0)";
+      });
+    });
+  }
+
   // ---------- custom cursor ----------
   if (reduceMotion || !hasFinePointer) return;
 

@@ -141,7 +141,7 @@ function renderHome({ settings, writing, travel }) {
       <div class="section-head"><div class="section-head-title">${chevronMark(16)}<h2>About</h2></div></div>
       <div class="about-teaser">
         <p>${esc(settings.about_teaser)}</p>
-        <a href="/about/">Read the full story</a>
+        <a href="/about/" class="magnetic-btn">Read the full story <span aria-hidden="true">&rarr;</span></a>
       </div>
     </section>
 
