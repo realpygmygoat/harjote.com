@@ -1,4 +1,4 @@
-# Welcome to Harjote's portfolio website!
+# Welcome to Harjote's portfolio website! (WIP)
 
 This is my personal portfolio website where I want to share my professional skills 
 as a Computer Science major, and also share stuff about my life and what I like to do. 
