@@ -8,17 +8,21 @@ const esc = escapeHtml;
 // heading needs a small recurring graphic anchor.
 //
 // Unique per call (not per page) so multiple chevronMark() calls on the
-// same page never collide — an SVG <clipPath> needs an id, and ids must be
-// unique within one HTML document.
-let chevronClipCounter = 0;
+// same page never collide — an SVG <clipPath>/<pattern> needs an id, and
+// ids must be unique within one HTML document.
+let chevronIdCounter = 0;
 
 function chevronMark(size = 20) {
   const h = size;
   const w = Math.round((size * 66) / 34);
-  const clipId = `chevron-clip-${chevronClipCounter++}`;
+  const clipId = `chevron-clip-${chevronIdCounter++}`;
+  const stripeId = `chevron-stripe-${chevronIdCounter++}`;
   // Fill colors come from classes in styles.css, not inline style attributes
   // — the site's CSP intentionally has no 'unsafe-inline' for style-src, so
-  // an inline style="..." here would just get silently blocked.
+  // an inline style="..." here would just get silently blocked. The
+  // fill="url(#...)" references below are a different thing (a plain SVG
+  // presentation attribute pointing at an in-document <pattern>/<clipPath>,
+  // not a style attribute) and aren't affected by that restriction.
   //
   // The third triangle is stroked, not filled, and an SVG stroke is
   // centered on the path by default — half its width sits outside the
@@ -27,9 +31,16 @@ function chevronMark(size = 20) {
   // own shape keeps only the inward half, so its outer edge lines up
   // exactly with the filled triangles; the stroke-width is doubled in
   // styles.css to compensate, so the line still looks the same weight.
+  //
+  // The middle triangle is filled with a repeating <pattern> of horizontal
+  // bars instead of a flat fill — the pattern's own <rect> still uses the
+  // chevron-fill-sage class, so the stripe color stays theme-reactive.
   return `<svg width="${w}" height="${h}" viewBox="0 0 66 34" class="chevron-mark" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
     <path d="M2 2 L22 17 L2 32 Z" class="chevron-fill-brass"></path>
-    <path d="M24 2 L44 17 L24 32 Z" class="chevron-fill-sage"></path>
+    <pattern id="${stripeId}" width="6" height="6" patternUnits="userSpaceOnUse">
+      <rect width="6" height="3" class="chevron-fill-sage"></rect>
+    </pattern>
+    <path d="M24 2 L44 17 L24 32 Z" fill="url(#${stripeId})"></path>
     <clipPath id="${clipId}"><path d="M46 2 L66 17 L46 32 Z"></path></clipPath>
     <path d="M46 2 L66 17 L46 32 Z" class="chevron-outline" clip-path="url(#${clipId})"></path>
   </svg>`;
