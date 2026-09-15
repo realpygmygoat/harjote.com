@@ -35,9 +35,17 @@ function chevronMark(size = 20) {
   // The middle triangle is filled with a repeating <pattern> of horizontal
   // bars instead of a flat fill — the pattern's own <rect> still uses the
   // chevron-fill-sage class, so the stripe color stays theme-reactive.
+  // y="2" starts the tile grid at the triangle's own top edge instead of
+  // the SVG's origin (a <pattern> tiles from (0,0) by default, regardless
+  // of where the shape it's filling actually sits) — the triangle spans
+  // y=2 to y=32, a height of exactly five 6-unit tiles, so this lines the
+  // tiling up to end exactly at the bottom edge too. Without it, the tile
+  // grid and the triangle's edges didn't share a start point, so the
+  // stripes nearest the top and bottom were sliced through mid-band
+  // instead of reading as complete bars like the ones in between.
   return `<svg width="${w}" height="${h}" viewBox="0 0 66 34" class="chevron-mark" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
     <path d="M2 2 L22 17 L2 32 Z" class="chevron-fill-brass"></path>
-    <pattern id="${stripeId}" width="6" height="6" patternUnits="userSpaceOnUse">
+    <pattern id="${stripeId}" x="0" y="2" width="6" height="6" patternUnits="userSpaceOnUse">
       <rect width="6" height="3" class="chevron-fill-sage"></rect>
     </pattern>
     <path d="M24 2 L44 17 L24 32 Z" fill="url(#${stripeId})"></path>
