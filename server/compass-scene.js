@@ -265,8 +265,28 @@ function initCompass() {
     const rect = container.getBoundingClientRect();
     return { w: rect.width || 260, h: rect.height || 260 };
   };
+
+  // The site is zoomed via CSS (html{zoom:1.25} in styles.css). container's
+  // getBoundingClientRect() already reflects that (a 210px-wide .hero-visual
+  // renders at 262.5px) — but Three.js's setSize() also writes that same
+  // number straight to the canvas's own CSS width/height, and since the
+  // canvas lives inside the same zoomed subtree, THAT declaration gets
+  // zoomed a second time (262.5px -> 328px), leaning the oversized canvas
+  // out past its container's right edge instead of staying centered.
+  // setSize(w, h, false) skips Three.js's own style writes so the internal
+  // render resolution stays fully sized to the real container (no quality
+  // loss), and the CSS size is set here instead, divided by the zoom
+  // factor so it lands back on the container's actual size once the
+  // browser re-zooms it for display.
+  const pageZoom = parseFloat(getComputedStyle(document.documentElement).zoom) || 1;
+  function applySize(w, h) {
+    renderer.setSize(w, h, false);
+    renderer.domElement.style.width = w / pageZoom + "px";
+    renderer.domElement.style.height = h / pageZoom + "px";
+  }
+
   const { w, h } = getSize();
-  renderer.setSize(w, h);
+  applySize(w, h);
   container.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
@@ -391,7 +411,7 @@ function initCompass() {
   if (window.ResizeObserver) {
     new ResizeObserver(() => {
       const { w, h } = getSize();
-      renderer.setSize(w, h);
+      applySize(w, h);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
     }).observe(container);
