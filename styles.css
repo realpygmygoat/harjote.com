@@ -24,17 +24,19 @@
 /* Light mode: the LinkedIn banner's actual palette (white/navy/teal),
    sampled from the real file rather than eyeballed — same source as the
    teal used elsewhere on the site. --ink keeps its role as "the page
-   background," just inverted to white; --paper flips to dark navy instead
-   of staying pale, so the About-teaser card still reads as a distinct
-   surface against the new white page instead of nearly disappearing into
-   it (a light cream card popping on a dark page, mirrored as a dark navy
-   card popping on a light one). --sage is intentionally darker than the
-   banner's own lightest dot tone — the literal sampled color reads fine
-   as an icon fill but is too low-contrast for the small mono text it's
-   also used for here (kickers, dates), so it's a deliberate readability
-   adjustment, not a mismatch. */
+   background," just inverted from dark to light — a warm cream
+   (#E7E2D4, the same tone used as --text in dark mode) rather than pure
+   white, which read as too harsh/clinical for a page this text-heavy;
+   --paper flips to dark navy instead of staying pale, so the
+   About-teaser card still reads as a distinct surface against the page
+   instead of nearly disappearing into it (a light card popping on a dark
+   page, mirrored as a dark navy card popping on a light one). --sage is
+   intentionally darker than the banner's own lightest dot tone — the
+   literal sampled color reads fine as an icon fill but is too
+   low-contrast for the small mono text it's also used for here (kickers,
+   dates), so it's a deliberate readability adjustment, not a mismatch. */
 :root[data-theme="light"]{
-  --ink:#FFFFFF;
+  --ink:#E7E2D4;
   --surface:#EEF4F4;
   --paper:#203348;
   --text:#203348;
