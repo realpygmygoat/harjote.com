@@ -16,6 +16,10 @@
   --grey:#4a453c;
   --rule:#2B333C;
   --sidebar-w: 240px;
+  /* Kept as a variable, not just written directly into `zoom` below, so
+     any CSS that needs to compensate for it (see .sidebar's height) stays
+     in sync automatically if this number ever changes. */
+  --page-zoom: 1.25;
 }
 /* Light mode: the LinkedIn banner's actual palette (white/navy/teal),
    sampled from the real file rather than eyeballed — same source as the
@@ -51,7 +55,7 @@
    every length unit at once (px included), so text and the space it
    wraps within grow together and wrapping stays identical to un-zoomed,
    just bigger — matching the reference screenshots exactly. */
-html{scroll-behavior:smooth; zoom:1.25;}
+html{scroll-behavior:smooth; zoom:var(--page-zoom);}
 /* Cross-fades color/background/border changes when the theme toggle
    flips :root's custom properties, instead of every themed element
    snapping to its new color in the same frame. Scoped to color-ish
@@ -124,7 +128,15 @@ h1, h2, h3, .display{
   flex-shrink:0;
   position:sticky;
   top:0;
-  height:100vh;
+  /* `vh`, like `px`, is a length the page's zoom multiplies for rendering
+     — but the real viewport it's meant to describe doesn't grow to match
+     (same reason window.innerHeight stays put under zoom). A plain
+     100vh here rendered 25% taller than the actual screen, pushing the
+     "now"/social/theme-toggle block at the bottom past the visible fold
+     with no way to scroll to it (a sticky element doesn't get its own
+     scroll). Dividing by --page-zoom cancels the multiplication out, so
+     this lands back on exactly the real viewport height. */
+  height:calc(100vh / var(--page-zoom));
   padding:3rem 2rem;
   display:flex;
   flex-direction:column;
