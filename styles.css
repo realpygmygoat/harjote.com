@@ -44,7 +44,7 @@
   --brass:#225D61;
   --sage:#2D7376;
   --grey:#B8C4C4;
-  --rule:#DDE5E5;
+  --rule:#2D7376; /* was a near-invisible #DDE5E5 — too close to --ink to actually read as a line */
 }
 *{box-sizing:border-box;}
 /* Defaults the whole site to what 125% browser zoom already looked like,
