@@ -306,11 +306,22 @@ section{margin-bottom:5.5rem;}
 
 /* ---------- travel log ---------- */
 .log{position:relative; padding-left:1.6rem;}
+/* width is 0.8px, not a plainer 1px — at this site's 1.25x zoom (see
+   html{zoom:...} above), a declared length renders 1.25x bigger, so a
+   plain 1px line would actually paint at a fractional 1.25px. A thin
+   straight line at a fractional pixel width is exactly the kind of thing
+   browsers snap/anti-alias inconsistently (unlike a small circle, which
+   has no hard edges to snap), which was making this line visibly not
+   line up with the dots below despite both being mathematically centered
+   on the same coordinate. 0.8px * 1.25 = a clean, whole 1px — no
+   fractional width left for the renderer to resolve ambiguously. left is
+   nudged from 4px to 4.1px to keep this narrower line's center in
+   exactly the same place the dots already expect (see .entry::before). */
 .log::before{
   content:"";
   position:absolute;
-  left:4px; top:0.6rem; bottom:0.6rem;
-  width:1px;
+  left:4.1px; top:0.6rem; bottom:0.6rem;
+  width:0.8px;
   background:var(--rule);
 }
 .entry{
