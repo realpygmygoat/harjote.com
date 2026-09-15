@@ -317,15 +317,13 @@ section{margin-bottom:5.5rem;}
 .entry .note{color:var(--text-muted); margin-top:0.3rem;}
 
 /* ---------- about teaser ---------- */
-.about-teaser{
-  background:var(--paper);
-  color:var(--ink);
-  border-radius:2px;
-  padding:2.5rem;
-  max-width:680px;
-}
-.about-teaser p{font-size:1.1rem;}
-.about-teaser a{color:var(--ink); border-bottom:1px solid var(--brass); text-decoration:none;}
+/* Used to be a standalone "pop" card (--paper background, --ink text) that
+   stood apart from the rest of the page. Flattened to plain page colors so
+   it reads as ordinary body copy, the same as the hero/page-header
+   paragraphs above it, instead of looking like a separate component. */
+.about-teaser{max-width:680px;}
+.about-teaser p{font-size:1.1rem; color:var(--text-muted);}
+.about-teaser a{color:var(--brass); text-decoration:underline;}
 
 /* ---------- long-form article body (posts / entries / about) ---------- */
 .article{max-width:640px;}
