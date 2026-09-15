@@ -139,7 +139,11 @@ h1, h2, h3, .display{
 .chevron-mark{flex-shrink:0; display:inline-block; vertical-align:middle;}
 .chevron-fill-brass{fill:var(--brass);}
 .chevron-fill-sage{fill:var(--sage);}
-.chevron-outline{fill:none; stroke:var(--text-muted); stroke-width:2;}
+/* stroke-width is doubled (4, not 2) because the clip-path in render.js's
+   chevronMark() keeps only the inward half of the stroke — this restores
+   the same visual line weight while keeping the outer edge the same size
+   as the two filled triangles beside it. */
+.chevron-outline{fill:none; stroke:var(--text-muted); stroke-width:4;}
 .kicker-row{display:flex; align-items:center; gap:0.55rem;}
 nav.primary{margin-top:3rem;}
 nav.primary a{

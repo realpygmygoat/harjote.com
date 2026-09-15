@@ -6,16 +6,32 @@ const esc = escapeHtml;
 // The three-chevron mark, adapted from the banner: three triangles fading
 // from a solid fill to an outline. Used wherever a kicker line or section
 // heading needs a small recurring graphic anchor.
+//
+// Unique per call (not per page) so multiple chevronMark() calls on the
+// same page never collide — an SVG <clipPath> needs an id, and ids must be
+// unique within one HTML document.
+let chevronClipCounter = 0;
+
 function chevronMark(size = 20) {
   const h = size;
   const w = Math.round((size * 66) / 34);
+  const clipId = `chevron-clip-${chevronClipCounter++}`;
   // Fill colors come from classes in styles.css, not inline style attributes
   // — the site's CSP intentionally has no 'unsafe-inline' for style-src, so
   // an inline style="..." here would just get silently blocked.
+  //
+  // The third triangle is stroked, not filled, and an SVG stroke is
+  // centered on the path by default — half its width sits outside the
+  // path's own edge, which made this one triangle read as visibly bigger
+  // than the two solid ones next to it. Clipping the stroke to the path's
+  // own shape keeps only the inward half, so its outer edge lines up
+  // exactly with the filled triangles; the stroke-width is doubled in
+  // styles.css to compensate, so the line still looks the same weight.
   return `<svg width="${w}" height="${h}" viewBox="0 0 66 34" class="chevron-mark" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
     <path d="M2 2 L22 17 L2 32 Z" class="chevron-fill-brass"></path>
     <path d="M24 2 L44 17 L24 32 Z" class="chevron-fill-sage"></path>
-    <path d="M46 2 L66 17 L46 32 Z" class="chevron-outline"></path>
+    <clipPath id="${clipId}"><path d="M46 2 L66 17 L46 32 Z"></path></clipPath>
+    <path d="M46 2 L66 17 L46 32 Z" class="chevron-outline" clip-path="url(#${clipId})"></path>
   </svg>`;
 }
 
